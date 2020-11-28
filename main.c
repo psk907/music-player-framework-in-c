@@ -16,14 +16,14 @@ typedef struct _Song {
 
 
 // head points to the last song in the playlist(queue)
-Song* head = NULL;
+Song* first = NULL;
 
 // tail points to the first song in the playlist(queue)
-Song* tail = NULL; 
+Song* last = NULL; 
 
 //Function to to check if the playlist is empty
 bool isEmpty(){
-    return head==NULL;
+    return first==NULL;
 }
 
 // nowPlaying points to the song currently playing
