@@ -69,15 +69,15 @@ int main(){
 
              }
     
-    case 2 :{
-            void printSong(struct song**pool)
+    /*case 2 :{
+            void printSong(struct song _pool)
              {   
               int i;
               for( i = 0 ; i < 10 ; i++ )
-              printf("%-40s    %-40s\n",pool[insert_index]->title, , pool[insert_index]->year, pool[insert_index]->duration, pool[insert_index]->album);
+              printf("%-40s    %-40s\n",song_pool[insert_index]->title, , song_pool[insert_index]->year, song_pool[insert_index]->duration, song_pool[insert_index]->album);
              }
              }     
-             break;
+             break;*/
 
     default:
        

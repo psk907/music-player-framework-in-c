@@ -1,5 +1,7 @@
-# DSC Research Project
+# Data Structures in C Research Project
+Music Playlists with LinkedLists
 
+<<<<<<< HEAD
 ## TEAM
 - #### Suraj Kumar
 - #### Trishi Reddy
@@ -7,6 +9,11 @@
 
 ## STUFF TO DO
 Let's start with one empty array , where all Songs will be stored and an empty playlist (queue) .initialize the array( call it  pool ) with 100 empty memory locations using malloc , and create sone int insert_index = 0
+=======
+## FUNCTIONS
+Let's start with an empty array called song_pool.
+We shall store the songs extracted from our data set in the rawdata.csv file in this array.
+>>>>>>> ae4118521b4324be5547603def0884e1e0e33928
 
 In our menu, let the first option be 
 1) create a song:
@@ -18,11 +25,15 @@ In our menu, let the first option be
    - It'll print all songs in the pool
 We'll 
 
-3) Create/clear the playlist   
-   - it'll show create if isEmpty()   , delete otherwise
-
+3) Create/clear the playlist (Let's have only one playlist for now)   
+   - ```
+        if isEmpty()
+            show create playlist option     
+        otherwise
+            show delete playlist option
+        ```
 4) Add song to playlist
-    -  it'll show all songs in the pool 
+    - Displays first 10 songs from the pool and then next 10 based on user choice
     - prompt to enter song number 
     - that song will be added to the end of our queue 
     - How ? By setting it's 
@@ -40,4 +51,34 @@ We'll
 5) Show Now Playing
    - show the details of the song which nowPlaying pointer is pointing to.
 
-6) TBD
+6) Shuffle Playlist
+    - shuffle the given linkedlist
+    - set nowPlaying to first item in the shuffled LL
+
+7) Next/Prev Song
+    - Change nowPlaying to next node or prev node
+    - if nextNode or prev node is NULL, display relevant message.
+    - Show the updated nowPlaying on screen.
+
+8) Help
+    - Display a nice hardcoded instruction sheet of all commands available
+
+9) About
+    - Show the team members, their GitHub URL's, this project's GitHub Repo and other details
+
+X) Quit Music Player
+    - ```
+        for every song in song_pool[]:
+            free(song)
+        ```
+    - free any other dynamically allocated resource
+    - Display a thank you message
+    
+
+<hr />
+
+## TEAM
+- #### Suraj Kumar
+- #### Trishi Reddy
+- #### Sharath H
+
