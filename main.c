@@ -7,12 +7,14 @@
 
 // Data Structure for an individual song [ FINAL ]
 typedef struct _Song {
-    char title[MAX_STRING_SIZE], artist[MAX_STRING_SIZE],album[MAX_STRING_SIZE];
+    char title[MAX_STRING_SIZE],album[MAX_STRING_SIZE];
     short int year;
     double duration;
     struct Song *prevTrack;
     struct Song *nextTrack;
 } Song ;
+
+typedef struct Song *songptr ;
 
 
 // head points to the last song in the playlist(queue)
@@ -29,29 +31,60 @@ bool isEmpty(){
 // nowPlaying points to the song currently playing
 Song* nowPlaying = NULL;
 
-Song* createSong (const char* title,const char* artist,const char* album,const int year,const double duration){
+Song* createSong (const char* title ,const char* album,const int year,const double duration){
     Song* temp = malloc(sizeof(Song));
-    strcpy(temp->title, title); 
-    strcpy(temp->artist, artist); 
+    strcpy(temp->title, title);  
     strcpy(temp->album, album);
     temp->year=year;
     temp->duration=duration; 
     return temp;
 }
 
+
+
+            
 int main(){
     char userChoice = '0';
-    /* TODO : Write a menu based interface with options and in a loop 
-        1. Add a new song to the playlist
-            - take user inputs
-            - call createSong
-            -  assign it to a pointer
-        X. End program
-    */
+    switch (userChoice)
+    {
+    case 1 : {
+             struct Song  **pool = (struct Song**)malloc(100 * sizeof(struct Song*));
+             int insert_index=0;
+             songptr song_pool [100];
+             for( insert_index = 0 ; insert_index < 100 ; insert_index++ )
+            {
+             printf("Enter the details of song %d\n", insert_index+1);
+             char title[40], album[40];
+             int year; 
+             double duration; 
+             scanf("Tittle: \n Album: %s%s",title, album);
+             scanf("Year: %i",&year);
+             scanf("Duration: %lf",&duration);
+             song_pool[insert_index] = createSong (title, album, year, duration);
+             printf("\n");
+             }
+             
+             
+            break;
+
+             }
+    
+    case 2 :{
+            void printSong(struct song**pool)
+             {   
+              int i;
+              for( i = 0 ; i < 10 ; i++ )
+              printf("%-40s    %-40s\n",pool[insert_index]->title, , pool[insert_index]->year, pool[insert_index]->duration, pool[insert_index]->album);
+             }
+             }     
+             break;
+
+    default:
+       
+              break;
+    }
+
     printf("MENU");
     
-    Song *song= createSong("Dynamite","BST","Who knows?",2020,92);
-    printf("%s",song->album);
-    free(song);
-    return 0;
+
 }

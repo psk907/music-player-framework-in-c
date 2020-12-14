@@ -6,8 +6,7 @@
 - #### Sharath H
 
 ## STUFF TO DO
-Let's start with one empty array , where all Songs will be stored and an empty playlist (queue) .
-We'll initialize the array( call it  pool ) with 100 empty memory locations using malloc , and create sone int insert_index = 0
+Let's start with one empty array , where all Songs will be stored and an empty playlist (queue) .initialize the array( call it  pool ) with 100 empty memory locations using malloc , and create sone int insert_index = 0
 
 In our menu, let the first option be 
 1) create a song:
@@ -17,6 +16,7 @@ In our menu, let the first option be
     - Ask if user wants to add to playlist, and do so accordingly
 2) Show all songs
    - It'll print all songs in the pool
+We'll 
 
 3) Create/clear the playlist   
    - it'll show create if isEmpty()   , delete otherwise
