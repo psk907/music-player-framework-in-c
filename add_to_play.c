@@ -43,12 +43,10 @@ void add_to_pl(){
         }
     }
 }
-void delete_pl ()
+void delete_pl()
 {
   while (header_node)
     {
-
-
       node_ptr current = header_node;
       while (current != NULL)
 	{
