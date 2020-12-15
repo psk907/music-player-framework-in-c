@@ -3,3 +3,6 @@
 
 #executable files
 *.exe
+
+#output files from mac
+*.out
