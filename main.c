@@ -112,9 +112,9 @@ void readFromCSV()
             sscanf(releaseDate, "%d", &year);
             token = strtok(NULL, ",");
             char temp[MAX_STRING_SIZE];
-            strncpy(temp, token + 1, strlen(token) - 1);
+            strncpy(temp, token + 1, 6);
             sscanf(temp, "%d", &durationms);
-            duration = durationms / 3600.0;
+            duration = durationms / 60000.0;
             token = strtok(NULL, ","); // get the next token
             strcpy(id, token);
             token = strtok(NULL, ","); // get the next token
@@ -179,7 +179,7 @@ void main_menu()
 void show_all_songs()
 {
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
-        printf("%-1d %-3s %-3s %-3d %0.2lfs\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
+        printf("%-1d %-3s %-3s %-3d %0.2lfmin\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
 }
 
 int main()
