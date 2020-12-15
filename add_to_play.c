@@ -42,7 +42,23 @@ void add_to_pl(){
             
         }
     }
-    
-    
-    
+}
+void delete_pl ()
+{
+  while (header_node)
+    {
+
+
+      node_ptr current = header_node;
+      while (current != NULL)
+	{
+	  node_ptr next = current->next_song;
+	  free (current);
+	  current = next;
+	}
+      header_node = NULL;
+      printf ("the playlist was successfully deleted");
+    }
+  printf ("playlist does not exist, can't delete");
+
 }
