@@ -2,8 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
-#define MAX_SONG_POOL 100
+#define MAX_SONG_POOL 120
 #define MAX_STRING_SIZE 75
 
 // Data Structure for an individual song [ FINAL ]
@@ -43,48 +49,105 @@ bool does_playlist_exist()
 
 void main_menu()
 {
-    printf("\nMAIN MENU\n");
-    printf("1. Create a new song\n");
-    printf("2. Display all available songs\n");
-    printf("3. Create a playlist\n");
-    printf("4. Add a song to the playlist\n");
-    printf("5. Delete a playlist\n");
-    printf("6. Shuffle playlist\n");
-    printf("-1. Exit music player\n");
+    printf("\n----------------------------------------------------------------------\n");
+    printf("                              MAIN MENU\n");
+    printf("----------------------------------------------------------------------\n");
+
+    if (now_playing == NULL || now_playing->song == NULL)
+    {
+        printf("                          NO TRACK SELECTED\n");
+    }
+    else
+    {
+        printf("    NOW    |   %s\n", now_playing->song->title);
+        printf("  PLAYING  |   %0.2lf minutes\n", now_playing->song->duration);
+    }
+    printf("----------------------------------------------------------------------\n");
+    printf("   #   |  Action   \n");
+    printf("----------------------------------------------------------------------\n");
+    printf("   1   |  Create a new song(still faulty :/)\n");
+    printf("   2   |  Display all available songs\n");
+    if (does_playlist_exist())
+        printf("   3   |  Delete playlist\n");
+    else
+        printf("   3   |  Create a new playlist\n");
+    printf("   4   |  Add a song to the playlist\n");
+    printf("   5   |  Shuffle playlist\n");
+    printf("   6   |  Display playlist\n");
+    printf("   7   |  Play previous track\n");
+    printf("   8   |  Play next track\n");
+    printf("  -1   |  Exit music player\n");
+    printf("----------------------------------------------------------------------\n");
+    printf("                        Enter your choice below\n");
 }
 
-void show_all_songs()
+void show_all_songs_raw()
 {
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
         printf("%-1d %-3s %-3s %-3d %0.2lfmin\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
 }
 
+void show_playlist()
+{
+    if (does_playlist_exist())
+    {
+        printf("\n\n----------------------------------------------------------------------\n");
+        printf("                          YOUR PLAYLIST\n");
+        printf("----------------------------------------------------------------------\n");
+        printf("   #   |  Song Title   \n");
+        printf("----------------------------------------------------------------------\n");
+        node_ptr current = header_node;
+        while (current != NULL)
+        {
+            node_ptr next = current->next_song;
+            printf("  %d   |  %s\n", 1, current->song->title); // pool=array of song structures
+            current = next;
+        }
+
+        printf("----------------------------------------------------------------------\n");
+    }
+    else
+    {
+        printf("\nYou haven't created a playlist yet. Nothing to delete\n");
+    }
+}
 
 void pagewise_song_display(int step)
 {
     printf("\n\n----------------------------------------------------------------------\n");
     printf("                             SONGS LIST\n");
     printf("----------------------------------------------------------------------\n");
-    printf("   #   |  Song Name   \n");
+    printf("   #   |  Song Title   \n");
     printf("----------------------------------------------------------------------\n");
     for (int i = step - 10; i < step && song_pool[i] != NULL; i++)
     {
-        printf("\n  %d   |  %s\n", (i + 1), song_pool[i]->title); // pool=array of song structures
+        printf("\n  %d   |  %s\n", (i + 1), song_pool[i]->title);
     }
     printf("----------------------------------------------------------------------\n");
     printf("[Enter -2 to go to prev page] | Page %d | [Enter -1 to go to next page]\n", ((int)step / 10));
     printf("----------------------------------------------------------------------\n");
-    printf("                          Enter your choice\n");
+    printf(" <<<< Enter 0 to go back to main menu.\n");
+
+    printf("----------------------------------------------------------------------\n");
+    printf("                        Enter your choice below\n");
 }
 
-int pagewise_song_selector()
+int song_selector()
 {
-    int song_number = 0;
+    int song_number = -1;
     int step = 10;
-    while (song_number <= 0 || song_number > pool_insert_index)
+    while (song_number < 0 || song_number > pool_insert_index)
     {
         pagewise_song_display(step);
-        scanf("%d", &song_number);
+        char input[MAX_STRING_SIZE];
+        scanf("%s", input);
+
+        if (!sscanf(input, "%d", &song_number))
+        {
+            system("clear");
+            printf("You seem to have entered an invalid input.\nReturning to main menu.");
+            return 0;
+        }
 
         if (song_number == -2)
         {
@@ -134,7 +197,7 @@ void create_playlist()
 
     node_ptr temp = (node_ptr)malloc(sizeof(PlaylistNode));
     printf("\nPick the song you want to add to your new playlist\n");
-    song_number = pagewise_song_selector();
+    song_number = song_selector();
     if (song_number > 0 && song_number <= 100)
     {
         temp->song = song_pool[song_number - 1];
@@ -142,9 +205,14 @@ void create_playlist()
         temp->next_song = NULL;
         header_node = temp;
         tail_node = temp->next_song;
+        now_playing = temp;
 
         system("clear");
         printf("---\n%s has been added to your new playlist.\n---", song_pool[song_number - 1]->title);
+    }
+    else if (song_number == 0)
+    {
+        system("clear");
     }
     else
     {
@@ -152,12 +220,12 @@ void create_playlist()
     }
 }
 
-void add_to_pl()
+void add_to_playlist()
 {
     int song_number = 0;
     int step = 10;
     printf("\nPick the song you want to add\n");
-    song_number = pagewise_song_selector();
+    song_number = song_selector();
     if (song_number > 0 && song_number <= pool_insert_index)
     {
         node_ptr temp = malloc(sizeof(PlaylistNode));
@@ -169,6 +237,8 @@ void add_to_pl()
             temp->next_song = NULL;
             header_node = temp;
             tail_node = temp->next_song;
+
+            now_playing = header_node;
         }
 
         else if (header_node->next_song == NULL)
@@ -186,7 +256,12 @@ void add_to_pl()
             temp->prev_song = tail_node;
             temp->next_song = NULL;
         }
-        printf("\n%s has been added to your playlist.\n", song_pool[song_number - 1]->title);
+        system("clear");
+        printf("---\n%s has been added to your playlist.\n---", song_pool[song_number - 1]->title);
+    }
+    else if (song_number == 0)
+    {
+        system("clear");
     }
     else
     {
@@ -250,7 +325,7 @@ void readFromCSV()
         }
     }
 
-    printf("%d Songs added.\n\n", i);
+    //printf("%d Songs added.\n\n", i);
     fclose(file);
 }
 
@@ -268,6 +343,8 @@ void user_song_input()
     while (add_another && pool_insert_index < MAX_SONG_POOL)
     {
         printf("\nEnter the details of the song you want to create.\n");
+        printf("Song ID: \n");
+        scanf("%s", id);
         printf("Title: \n");
         scanf("%s", songname);
         printf("Album: ");
@@ -277,14 +354,14 @@ void user_song_input()
         printf("Duration(in s): ");
         scanf("%d", &durationms);
         duration = durationms / 60;
-        song_pool[pool_insert_index] = createSong(songname, album, year, duration, "uri", "id");
+        song_pool[pool_insert_index] = createSong(songname, album, year, duration, "spotify:track:6h5PAsRni4IRlxWr6uDPTP", "00xx111");
         printf("\n%s has been created.\n\n", songname);
         printf("\nDo you want to create another song? (Enter 1 for yes and 0 for no)");
         scanf("%d", &add_another);
     }
 }
 
-void delete_playlist()
+bool delete_playlist()
 {
     if (header_node != NULL)
     {
@@ -296,12 +373,10 @@ void delete_playlist()
             current = next;
         }
         header_node = NULL;
-        printf("\nThe playlist was successfully deleted.\n");
+        now_playing = NULL;
+        return true;
     }
-    else
-    {
-        printf("\nYou haven't created a playlist yet. Nothing to delete\n");
-    }
+    return false;
 }
 
 void free_all_memory()
@@ -309,6 +384,8 @@ void free_all_memory()
     delete_playlist();
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
         free(song_pool[i]);
+    printf("\n---END---");
+    Sleep(3);
 }
 
 int main()
@@ -316,6 +393,7 @@ int main()
     short int userChoice = 0;
     char *terminate = "X";
     int wrong_choice_count = 0;
+    system("clear");
     readFromCSV();
     while (userChoice != -1)
     {
@@ -328,6 +406,7 @@ int main()
         }
         case 1:
         {
+            system("clear");
             if (pool_insert_index >= MAX_SONG_POOL)
             {
                 printf("Cannot add more songs.\n");
@@ -339,28 +418,56 @@ int main()
         case 2:
         {
             system("clear");
-            show_all_songs();
+            //show_all_songs();
+            int user_song_selection = song_selector();
+            system("clear");
             break;
         }
         case 3:
         {
             system("clear");
-            create_playlist();
-            printf("\nPlaylist created\n");
+            if (does_playlist_exist())
+            {
+                printf("---");
+                if (delete_playlist())
+                    printf("\nThe playlist was successfully deleted.\n");
+                else
+                    printf("\nYou haven't created a playlist yet. Nothing to delete\n");
+
+                printf("---");
+            }
+            else
+                create_playlist();
             break;
         }
         case 4:
         {
             system("clear");
-            add_to_pl();
+            add_to_playlist();
             break;
         }
         case 5:
         {
             system("clear");
-            printf("---");
-            delete_playlist();
-            printf("---");
+            //shuffle Playlist
+            break;
+        }
+        case 6:
+        {
+            system("clear");
+            show_playlist();
+            break;
+        }
+        case 7:
+        {
+            system("clear");
+            //prev track
+            break;
+        }
+        case 8:
+        {
+            system("clear");
+            //next track
             break;
         }
 
@@ -391,10 +498,25 @@ int main()
         {
             main_menu();
         }
-        printf("Enter your choice from the main menu: ");
-        scanf("%d", &userChoice);
+
+        char input[MAX_STRING_SIZE];
+        scanf("%s", input);
+
+        if (!sscanf(input, "%d", &userChoice))
+        {
+            system("clear");
+            printf("----\nINVALID INPUT\n");
+            userChoice = 0;
+            wrong_choice_count++;
+            if (wrong_choice_count > 3)
+            {
+                printf("Sorry you have exceeded the maximum number of retries, terminating..");
+                free_all_memory();
+                exit(1);
+            }
+            continue;
+        }
     }
     free_all_memory();
-    printf("\n\nEND");
     return 0;
 }
