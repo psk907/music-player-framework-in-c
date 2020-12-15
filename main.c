@@ -170,9 +170,11 @@ void user_song_input()
 void main_menu()
 {
     printf("MENU\n");
+    printf("0. Show options again\n");
     printf("1. Create a new song\n");
     printf("2. Display all available songs\n");
-    printf("0. Show options again\n");
+    printf("3. Create a playlist\n");
+    printf("4. Add a song to the playlist\n");
     printf("-1. Exit music player\n");
 }
 
@@ -212,6 +214,12 @@ int main()
             show_all_songs();
             break;
         }
+        case 3:
+            {
+            create_playlist();
+            printf(" playlist was successfully created"/n);
+            break;
+            }
         default:
         {
             wrong_choice_count++;
