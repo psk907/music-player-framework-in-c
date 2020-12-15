@@ -28,7 +28,7 @@ typedef struct PlaylistNode
     node_ptr next_song;
 } PlaylistNode;
 
-node_ptr header_node = NULL, now_playing = NULL,node_ptr tail_node = NULL;
+node_ptr header_node = NULL, now_playing = NULL, tail_node = NULL;
 
 //Function to to check if the song pool is empty
 bool is_pool_empty()
@@ -39,6 +39,61 @@ bool is_pool_empty()
 bool does_playlist_exist()
 {
     return !(header_node == NULL);
+}
+
+void pagewise_song_display(int step)
+{
+    printf("\n\n----------------------------------------------------------------------\n");
+    printf("                             SONGS LIST\n");
+    printf("----------------------------------------------------------------------\n");
+    printf("   #   |  Song Name   \n");
+    printf("----------------------------------------------------------------------\n");
+    for (int i = step - 10; i < step && song_pool[i] != NULL; i++)
+    {
+        printf("\n  %d   |  %s\n", (i + 1), song_pool[i]->title); // pool=array of song structures
+    }
+    printf("----------------------------------------------------------------------\n");
+    printf("[Enter -2 to go to prev page] | Page %d | [Enter -1 to go to next page]\n", ((int)step / 10));
+    printf("----------------------------------------------------------------------\n");
+    printf("                          Enter your choice\n");
+}
+
+int pagewise_song_selector()
+{
+    int song_number = 0;
+    int step = 10;
+    while (song_number <= 0 || song_number > pool_insert_index)
+    {
+        pagewise_song_display(step);
+        scanf("%d", &song_number);
+
+        if (song_number == -2)
+        {
+            if (step > 10)
+            {
+                step -= 10;
+                system("clear");
+            }
+            else
+            {
+                printf("\nThis is itself is the first page\n");
+            }
+        }
+        else if (song_number == -1)
+        {
+            if (step <= pool_insert_index - 10)
+            {
+                step += 10;
+                system("clear");
+            }
+            else
+            {
+                printf("\nThis is the last page\n");
+            }
+        }
+    }
+
+    return song_number;
 }
 
 Song *createSong(const char *title, const char *album, const short int year, const double duration, const char *uri, const char *id)
@@ -59,22 +114,57 @@ void create_playlist()
     int song_number = 0, i = 0;
 
     node_ptr temp = (node_ptr)malloc(sizeof(PlaylistNode));
-
-    printf("\nSelect a song to add from the list below");
-    for (i = 0; i < 10 && song_pool[i] != NULL; i++)
-    {
-        printf("\n song no:%d,name:%s \n", (i + 1), song_pool[i]->title); // pool=array of song structures
-    }
-
-    printf("\nchoose a song number\n");
-    scanf("%d", song_number);
+    printf("\nPick the song you want to add\n\n");
+    song_number = pagewise_song_selector();
     if (song_number > 0 && song_number <= 100)
     {
         temp->song = song_pool[song_number - 1];
         temp->prev_song = NULL;
         temp->next_song = NULL;
         header_node = temp;
-        tail_node =temp->next_song ;
+        tail_node = temp->next_song;
+    }
+}
+
+void add_to_pl()
+{
+    int song_number = 0;
+    int step = 10;
+    printf("\nPick the song you want to add\n\n");
+    song_number = pagewise_song_selector();
+    if (song_number > 0 && song_number <= pool_insert_index)
+    {
+        node_ptr temp = malloc(sizeof(PlaylistNode));
+        if (header_node == NULL)
+        {
+
+            temp->song = song_pool[song_number - 1];
+            temp->prev_song = NULL;
+            temp->next_song = NULL;
+            header_node = temp;
+            tail_node = temp->next_song;
+        }
+
+        else if (header_node->next_song == NULL)
+        {
+            temp->song = song_pool[song_number - 1];
+            header_node->next_song = temp;
+            temp->prev_song = header_node;
+            temp->next_song = NULL;
+        }
+
+        else
+        {
+            temp->song = song_pool[song_number - 1];
+            tail_node->next_song = temp;
+            temp->prev_song = tail_node;
+            temp->next_song = NULL;
+        }
+        printf("\n%s has been added to your playlist.\n", song_pool[song_number - 1]->title);
+    }
+    else
+    {
+        printf("\nThere was a problem while handling your request, try again.\n");
     }
 }
 
@@ -170,8 +260,7 @@ void user_song_input()
 
 void main_menu()
 {
-    printf("MENU\n");
-    printf("0. Show options again\n");
+    printf("\nMAIN MENU\n");
     printf("1. Create a new song\n");
     printf("2. Display all available songs\n");
     printf("3. Create a playlist\n");
@@ -183,6 +272,12 @@ void show_all_songs()
 {
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
         printf("%-1d %-3s %-3s %-3d %0.2lfmin\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
+}
+
+void free_all_memory()
+{
+    for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
+        free(song_pool[i]);
 }
 
 int main()
@@ -212,28 +307,53 @@ int main()
         }
         case 2:
         {
+            system("clear");
             show_all_songs();
             break;
         }
         case 3:
-            {
+        {
+            system("clear");
             create_playlist();
-            printf(" playlist was successfully created"/n);
+            printf("\nPlaylist created\n");
             break;
-            }
+        }
+        case 4:
+        {
+            system("clear");
+            add_to_pl();
+        }
         default:
         {
+            if (wrong_choice_count == 3)
+            {   
+                system("clear");
+                printf("Please enter a valid option or the program will terminate.\n");
+            }
+            if (wrong_choice_count > 3)
+            {
+                system("clear");
+                printf("Sorry you have exceeded the maximum number of retries, terminating..");
+                free_all_memory();
+                exit(1);
+            }
+            else
+            {
+                system("clear");
+                printf("Please enter a valid option from the main menu below\n");
+            }
             wrong_choice_count++;
             break;
         }
         }
-        printf("Enter your choice: ");
+        if (userChoice != 0)
+        {
+            main_menu();
+        }
+        printf("Enter your choice from the main menu: ");
         scanf("%d", &userChoice);
     }
-    for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
-        free(song_pool[i]);
-
-    printf("\nPool Memory freed\n");
+    free_all_memory();
     printf("\n\nEND");
     return 0;
 }
