@@ -37,7 +37,7 @@ void add_to_pl(){
             tail_node=temp;
             temp->prev_song = tail_node;
             temp->next_song = NULL;
-            
+            tail_node=NULL;
             
             
         }
