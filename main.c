@@ -361,6 +361,44 @@ void user_song_input()
     }
 }
 
+int shuffle_playlist()
+{
+    node_ptr header_node2 = NULL;
+
+    //split playlist
+    node_ptr slow, fast;
+
+    if (header_node->next_song == NULL) /*only one element*/
+        return 0;
+
+    slow = fast = header_node;
+
+    while (fast->next_song != NULL && fast->next_song->next_song != NULL)
+    {
+        slow = slow->next_song;
+        fast = fast->next_song->next_song;
+    }
+    header_node2 = slow->next_song;
+    header_node2->prev_song = NULL;
+    slow->next_song = NULL;
+
+    //interleave
+    node_ptr current_node1, current_node2;
+    for (current_node2 = header_node2; header_node2->next_song != 0; header_node2 = current_node2)
+    {
+        for (current_node1 = header_node; header_node->next_song != 0; header_node = current_node1)
+        {
+            current_node1 = header_node->next_song;
+            header_node->next_song = header_node2->next_song;
+            header_node2->next_song = header_node;
+            header_node->prev_song = header_node2;
+            current_node2 = header_node;
+            // display  the playlist if u want
+        }
+    }
+    printf("Shuffled successfully");
+}
+
 bool delete_playlist()
 {
     if (header_node != NULL)
@@ -449,7 +487,7 @@ int main()
         case 5:
         {
             system("clear");
-            //shuffle Playlist
+            shuffle_playlist();
             break;
         }
         case 6:
@@ -468,12 +506,6 @@ int main()
         {
             system("clear");
             //next track
-            break;
-        }
-         case 6:
-        {
-            system("clear");
-            shuffle_pl();
             break;
         }
 
