@@ -221,6 +221,13 @@ int main()
             printf(" playlist was successfully created"/n);
             break;
             }
+        case 4:
+            {
+            add_to_pl();
+            printf("  song was successfully Added to the playlist\n");
+            break;
+            }
+                 
         default:
         {
             wrong_choice_count++;
