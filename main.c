@@ -39,18 +39,25 @@ Song* createSong (const char* title ,const char* album,const int year,const doub
     temp->duration=duration; 
     return temp;
 }
-
-
+ songptr song_pool [100];
+ 
+ /*void printSong(struct song**pool)
+             {   
+              int i;
+              for( i = 0 ; i < 10 ; i++ )
+              printf("%-40s    %-40s\n",pool[i]->title, pool[i]->album, pool[i]->year, pool[i]->duration);
+             }*/
 
             
 int main(){
-    char userChoice = '0';
+    int userChoice ;
+    scanf("%i"&userChoice);
     switch (userChoice)
     {
     case 1 : {
-             struct Song  **pool = (struct Song**)malloc(100 * sizeof(struct Song*));
+            struct Song  **pool = (struct Song**)malloc(100 * sizeof(struct Song*)); 
              int insert_index=0;
-             songptr song_pool [100];
+             
              for( insert_index = 0 ; insert_index < 100 ; insert_index++ )
             {
              printf("Enter the details of song %d\n", insert_index+1);
@@ -60,7 +67,7 @@ int main(){
              scanf("Tittle: \n Album: %s%s",title, album);
              scanf("Year: %i",&year);
              scanf("Duration: %lf",&duration);
-             song_pool[insert_index] = createSong (title, album, year, duration);
+             createSong (title, album,year, duration);
              printf("\n");
              }
              
@@ -69,15 +76,10 @@ int main(){
 
              }
     
-    /*case 2 :{
-            void printSong(struct song _pool)
-             {   
-              int i;
-              for( i = 0 ; i < 10 ; i++ )
-              printf("%-40s    %-40s\n",song_pool[insert_index]->title, , song_pool[insert_index]->year, song_pool[insert_index]->duration, song_pool[insert_index]->album);
-             }
+    case 2 :{
+            
              }     
-             break;*/
+             break;
 
     default:
        
