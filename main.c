@@ -265,6 +265,8 @@ void main_menu()
     printf("2. Display all available songs\n");
     printf("3. Create a playlist\n");
     printf("4. Add a song to the playlist\n");
+    printf("5. Delete a playlist\n");
+    printf("6. Shuffle playlist\n");
     printf("-1. Exit music player\n");
 }
 
@@ -322,11 +324,18 @@ int main()
         {
             system("clear");
             add_to_pl();
+            break;
         }
+        case 5:
+        {
+            //delete_pl();
+            break;
+        }
+
         default:
         {
             if (wrong_choice_count == 3)
-            {   
+            {
                 system("clear");
                 printf("Please enter a valid option or the program will terminate.\n");
             }
