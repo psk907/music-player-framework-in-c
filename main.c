@@ -4,15 +4,16 @@
 #include <stdbool.h>
 
 #define MAX_SONG_POOL 100
-#define MAX_STRING_SIZE 50
+#define MAX_STRING_SIZE 75
 
 // Data Structure for an individual song [ FINAL ]
 typedef struct Song *songptr;
 typedef struct Song
 {
-    char title[MAX_STRING_SIZE], album[MAX_STRING_SIZE], uri[MAX_STRING_SIZE],id[MAX_STRING_SIZE];
+    char title[MAX_STRING_SIZE], album[MAX_STRING_SIZE], uri[MAX_STRING_SIZE], id[MAX_STRING_SIZE];
     short int year;
     double duration;
+    char dur[MAX_STRING_SIZE];
 } Song;
 
 songptr song_pool[MAX_SONG_POOL];
@@ -41,13 +42,13 @@ bool does_playlist_exist()
     return !(header_node == NULL);
 }
 
-Song *createSong(const char *title, const char *album, const short int year, const double duration, const char *uri,const char *id)
+Song *createSong(const char *title, const char *album, const short int year, const double duration, const char *uri, const char *id)
 {
     Song *temp = malloc(sizeof(Song));
     strcpy(temp->title, title);
     strcpy(temp->album, album);
     //strcpy(temp->uri, uri);
-    strcpy(temp->id,id);
+    strcpy(temp->id, id);
     temp->year = year;
     temp->duration = duration;
     pool_insert_index++;
@@ -108,11 +109,11 @@ void readFromCSV()
                 continue;
             strcpy(songtitle, token);
             token = strtok(NULL, ","); // get the next token
-            strncpy(releaseDate, token+1, 4);
+            strncpy(releaseDate, token + 1, 4);
             sscanf(releaseDate, "%d", &year);
             token = strtok(NULL, ",");
             char temp[MAX_STRING_SIZE];
-            strncpy(temp,token+1,sizeof(token)-3);
+            strncpy(temp, token + 1, strlen(token) - 1);
             sscanf(temp, "%d", &durationms);
             duration = durationms / 3600.0;
             token = strtok(NULL, ","); // get the next token
@@ -128,7 +129,7 @@ void readFromCSV()
                 i++;
                 continue;
             }
-            song_pool[i - 1] = createSong(songtitle, album, year, duration, "uri",id);
+            song_pool[i - 1] = createSong(songtitle, album, year, duration, "uri", id);
             i++;
         }
     }
@@ -159,8 +160,8 @@ void user_song_input()
         scanf("%d", &year);
         printf("Duration(in s): ");
         scanf("%d", &durationms);
-        duration= durationms/60;
-        song_pool[pool_insert_index] = createSong(songname, album, year, duration, "uri","id");
+        duration = durationms / 60;
+        song_pool[pool_insert_index] = createSong(songname, album, year, duration, "uri", "id");
         printf("\n%s has been created.\n\n", songname);
         printf("\nDo you want to create another song? (Enter 1 for yes and 0 for no)");
         scanf("%d", &add_another);
@@ -179,7 +180,7 @@ void main_menu()
 void show_all_songs()
 {
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
-        printf("%-1d %-3s %-3s %-3d %ds\n", i, song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
+        printf("%-1d %-3s %-3s %-3d %0.2lfs\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
 }
 
 int main()
@@ -187,7 +188,7 @@ int main()
     short int userChoice = 0;
     char *terminate = "X";
     int wrong_choice_count = 0;
-    //readFromCSV();
+    readFromCSV();
     while (userChoice != -1)
     {
         switch (userChoice)
@@ -201,7 +202,7 @@ int main()
         {
             if (pool_insert_index >= MAX_SONG_POOL)
             {
-                printf("Cannot add more songs");
+                printf("Cannot add more songs.\n");
             }
 
             user_song_input();
