@@ -363,6 +363,12 @@ int main()
             printf("---");
             break;
         }
+         case 6:
+        {
+            system("clear");
+            shuffle_pl();
+            break;
+        }
 
         default:
         {
