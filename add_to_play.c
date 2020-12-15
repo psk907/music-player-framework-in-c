@@ -43,7 +43,7 @@ void add_to_pl(){
         }
     }
 }
-void delete_pl()
+void delete_playlist()
 {
   while (header_node)
     {

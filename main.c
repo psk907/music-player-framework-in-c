@@ -114,7 +114,7 @@ void create_playlist()
     int song_number = 0, i = 0;
 
     node_ptr temp = (node_ptr)malloc(sizeof(PlaylistNode));
-    printf("\nPick the song you want to add\n\n");
+    printf("\nPick the song you want to add to your new playlist\n");
     song_number = pagewise_song_selector();
     if (song_number > 0 && song_number <= 100)
     {
@@ -123,6 +123,13 @@ void create_playlist()
         temp->next_song = NULL;
         header_node = temp;
         tail_node = temp->next_song;
+
+        system("clear");
+        printf("---\n%s has been added to your new playlist.\n---", song_pool[song_number - 1]->title);
+    }
+    else
+    {
+        printf("\nThere was a problem while handling your request, try again.\n");
     }
 }
 
@@ -130,7 +137,7 @@ void add_to_pl()
 {
     int song_number = 0;
     int step = 10;
-    printf("\nPick the song you want to add\n\n");
+    printf("\nPick the song you want to add\n");
     song_number = pagewise_song_selector();
     if (song_number > 0 && song_number <= pool_insert_index)
     {
@@ -276,8 +283,29 @@ void show_all_songs()
         printf("%-1d %-3s %-3s %-3d %0.2lfmin\n", (i + 1), song_pool[i]->title, song_pool[i]->album, song_pool[i]->year, song_pool[i]->duration);
 }
 
+void delete_playlist()
+{
+    if (header_node != NULL)
+    {
+        node_ptr current = header_node;
+        while (current != NULL)
+        {
+            node_ptr next = current->next_song;
+            free(current);
+            current = next;
+        }
+        header_node = NULL;
+        printf("\nThe playlist was successfully deleted.\n");
+    }
+    else
+    {
+        printf("\nYou haven't created a playlist yet. Nothing to delete\n");
+    }
+}
+
 void free_all_memory()
 {
+    delete_playlist();
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
         free(song_pool[i]);
 }
@@ -328,7 +356,10 @@ int main()
         }
         case 5:
         {
-            //delete_pl();
+            system("clear");
+            printf("---");
+            delete_playlist();
+            printf("---");
             break;
         }
 
