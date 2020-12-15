@@ -1,19 +1,9 @@
 # Data Structures in C Research Project
 Music Playlists with LinkedLists
 
-<<<<<<< HEAD
-## TEAM
-- #### Suraj Kumar
-- #### Trishi Reddy
-- #### Sharath H
-
-## STUFF TO DO
-Let's start with one empty array , where all Songs will be stored and an empty playlist (queue) .initialize the array( call it  pool ) with 100 empty memory locations using malloc , and create sone int insert_index = 0
-=======
 ## FUNCTIONS
 Let's start with an empty array called song_pool.
 We shall store the songs extracted from our data set in the rawdata.csv file in this array.
->>>>>>> ae4118521b4324be5547603def0884e1e0e33928
 
 In our menu, let the first option be 
 1) create a song:
