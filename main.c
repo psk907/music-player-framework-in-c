@@ -470,6 +470,12 @@ int main()
             //next track
             break;
         }
+         case 6:
+        {
+            system("clear");
+            shuffle_pl();
+            break;
+        }
 
         default:
         {
