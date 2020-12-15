@@ -13,7 +13,6 @@ typedef struct Song
     char title[MAX_STRING_SIZE], album[MAX_STRING_SIZE], uri[MAX_STRING_SIZE], id[MAX_STRING_SIZE];
     short int year;
     double duration;
-    char dur[MAX_STRING_SIZE];
 } Song;
 
 songptr song_pool[MAX_SONG_POOL];
