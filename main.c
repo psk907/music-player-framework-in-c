@@ -98,7 +98,7 @@ typedef struct PlaylistNode
     node_ptr next_song;
 } PlaylistNode;
 
-node_ptr header_node = NULL, now_playing = NULL;
+node_ptr header_node = NULL, now_playing = NULL,node_ptr tail_node = NULL;
 
 //Function to to check if the song pool is empty
 bool is_pool_empty()
@@ -144,6 +144,7 @@ void create_playlist()
         temp->prev_song = NULL;
         temp->next_song = NULL;
         header_node = temp;
+        tail_node =temp->next_song ;
     }
 }
 
