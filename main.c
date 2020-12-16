@@ -9,7 +9,11 @@
 #include <unistd.h>
 #endif
 
+
+        
+
 #define MAX_SONG_POOL 120
+
 #define MAX_STRING_SIZE 75
 
 // Data Structure for an individual song [ FINAL ]
@@ -440,6 +444,7 @@ int main()
         case 0:
         { //Show menu options
             main_menu();
+ 
             break;
         }
         case 1:
@@ -540,6 +545,8 @@ int main()
         char input[MAX_STRING_SIZE];
         scanf("%s", input);
 
+
+
         if (!sscanf(input, "%d", &userChoice))
         {
             system("clear");
@@ -556,5 +563,6 @@ int main()
         }
     }
     free_all_memory();
+
     return 0;
 }
