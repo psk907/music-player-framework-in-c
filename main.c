@@ -11,14 +11,17 @@
 #endif
 
 #define MAX_SONG_POOL 120
-
 #define MAX_STRING_SIZE 75
 
 // Data Structure for an individual song
+
 typedef struct Song *songptr;
 typedef struct Song
 {
-    char title[MAX_STRING_SIZE], album[MAX_STRING_SIZE], uri[MAX_STRING_SIZE], id[MAX_STRING_SIZE];
+    char title[MAX_STRING_SIZE];
+    char album[MAX_STRING_SIZE];
+    char uri[MAX_STRING_SIZE];
+    char id[MAX_STRING_SIZE];
     short int year;
     double duration;
 } Song;
@@ -29,7 +32,6 @@ int pool_insert_index = 0;
 typedef struct PlaylistNode *node_ptr;
 typedef struct PlaylistNode
 {
-    int song_num; // so that it can be deleted
     songptr song;
     node_ptr prev_song;
     node_ptr next_song;
@@ -43,6 +45,7 @@ bool is_pool_empty()
     return song_pool[0] == NULL;
 }
 
+//Function to check if playlist exists
 bool does_playlist_exist()
 {
     return !(header_node == NULL);
