@@ -1,6 +1,18 @@
 # Data Structures in C Research Project
 Music Playlists with LinkedLists
 
+To continue 
+Clone the repo again in a new folder 
+```
+    git clone https://github.com/psk907/music-player-framework-in-c
+```
+or use the existing folder and do the following
+```
+    git remote remove origin
+    git remote add origin https://github.com/psk907/music-player-framework-in-c
+    git pull origin master
+```
+
 ## FUNCTIONS
 Let's start with an empty array called song_pool.
 We shall store the songs extracted from our data set in the rawdata.csv file in this array.
