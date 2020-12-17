@@ -3,14 +3,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <math.h>
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
 #endif
-
-
-        
 
 #define MAX_SONG_POOL 120
 
@@ -162,20 +160,27 @@ int song_selector()
             }
             else
             {
-                printf("\nThis is itself is the first page\n");
+                system("clear");
+                printf("\nThis itself is the first page");
             }
         }
         else if (song_number == -1)
         {
-            if (step <= pool_insert_index - 10)
+            if (step < ceil(pool_insert_index / 10.0) * 10)
             {
                 step += 10;
                 system("clear");
             }
             else
             {
-                printf("\nThis is the last page\n");
+                system("clear");
+                printf("\nThis is the last page");
             }
+        }
+        else if (song_number < -2 || song_number > pool_insert_index)
+        {
+            system("clear");
+            printf("\nENTER A VALID CHOICE\n");
         }
     }
 
@@ -444,7 +449,7 @@ int main()
         case 0:
         { //Show menu options
             main_menu();
- 
+
             break;
         }
         case 1:
@@ -544,8 +549,6 @@ int main()
 
         char input[MAX_STRING_SIZE];
         scanf("%s", input);
-
-
 
         if (!sscanf(input, "%d", &userChoice))
         {
