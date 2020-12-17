@@ -1,75 +1,27 @@
-# Data Structures in C Research Project
-Music Playlists with LinkedLists
+# Music Player Framework in C
 
-To continue 
-Clone the repo again in a new folder 
-```
-    git clone https://github.com/psk907/music-player-framework-in-c
-```
-or use the existing folder and do the following
-```
-    git remote remove origin
-    git remote add origin https://github.com/psk907/music-player-framework-in-c
-    git pull origin master
-```
+Music player Framework in C is a simple and efficient architecture that models the core functionality of modern day music player software such as Windows Media Player, VLC Media Player and Google Play Music.
 
-## FUNCTIONS
-Let's start with an empty array called song_pool.
-We shall store the songs extracted from our data set in the rawdata.csv file in this array.
+The framework is capable of reading and engaging with locally stored song data which symbolize audio file formats such as MP3, AAC and OBB Vorbis. Designed purely in the C programming language, this framework is a demonstration of the versatility of early-day programming languages and features an elegant yet simple UI that's a tribute to the UNIX based systems of the 80's, enveloping the implementation that has been written to handle various levels of runtime exceptions.
 
-In our menu, let the first option be 
-1) create a song:
-    - Take song details from user.
-    - store them in pool[insert_index] 
-    - Increment insert_index 
-    - Ask if user wants to add to playlist, and do so accordingly
-2) Show all songs
-   - It'll print all songs in the pool
-We'll 
+### Literature Survey
+The idea of implementing data structures in a music player was influenced by a  research paper titled - “New Implementation of Digital Jukebox in Data Structure By Using C++ Programming Language”, published by Manigandan Raamanathan from the Asia Pacific University, Malaysia. The paper was published by the International Journal of Advanced Research in Science and Engineering in Vol. No.6, Issue No.4 April 2017.The paper demonstrates an implementation of a “Digital Jukebox” using linked lists, queues and stacks in C++.
 
-3) Create/clear the playlist (Let's have only one playlist for now)   
-   - ```
-        if isEmpty()
-            show create playlist option     
-        otherwise
-            show delete playlist option
-        ```
-4) Add song to playlist
-    - Displays first 10 songs from the pool and then next 10 based on user choice
-    - prompt to enter song number 
-    - that song will be added to the end of our queue 
-    - How ? By setting it's 
-         - nextSong = NULL
-        - prevSong = end
-        - end = address of this song u chose
-    - ```
-        if(isEmpty()) {
-            nowPlaying = the song we just added  ,
-            first = the song we just added 
-        } 
-        ```
-    - So basically if playlist's empty and we add a song , It'll be the first and last song
+We have recreated the experience of  a simple music player that allows users to load a pool of songs from local storage and play tracks, create playlists and interact with it in a simple manner. The linked list data structure allows us to scrub through the entire playlist as per user’s instructions. To obtain a collection of songs we used the Spotify Developers API to save a CSV file of upto 100 songs’ metadata which we parse in our application to simulate the loading of songs from local storage. Our application features a simple menu based interface that allows all users to navigate with ease.
 
-5) Show Now Playing
-   - show the details of the song which nowPlaying pointer is pointing to.
+### Testing Instructions
 
-6) Next/Prev Song
-    - Change nowPlaying to next node or prev node
-    - if nextNode or prev node is NULL, display relevant message.
-    - Show the updated nowPlaying on screen.
+1. Download the .zip of the repository(Click here) to your computer and extract it.
+2. Unzip Working_Demo.zip to a new folder.
+3. Run demo.exe (Windows) or demo.out (through terminal on Linux/MacOS).
 
-X) Quit Music Player
-    - ```
-        for every song in song_pool[]:
-            free(song)
-        ```
-    - free any other dynamically allocated resource
-    - Display a thank you message
-    
+Note:
+ - You can find the source code in main.c
+ - The sample dataset is in raw_data.csv
 
-<hr />
 
-## TEAM
+
+### TEAM
 - #### Suraj Kumar
 - #### Trishi Reddy
 - #### Sharath H
