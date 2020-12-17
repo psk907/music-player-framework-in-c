@@ -36,7 +36,7 @@ typedef struct PlaylistNode
     node_ptr next_song;
 } PlaylistNode;
 
-node_ptr header_node = NULL, now_playing = NULL, tail_node = NULL;
+node_ptr header_node = NULL, now_playing = NULL;
 
 //Function to to check if the song pool is empty
 bool is_pool_empty()
@@ -119,11 +119,11 @@ void pagewise_song_display(int step)
     printf("\n\n----------------------------------------------------------------------\n");
     printf("                             SONGS LIST\n");
     printf("----------------------------------------------------------------------\n");
-    printf("   #   |  Song Title   \n");
+    printf("   #   |  Title                                            | Duration\n");
     printf("----------------------------------------------------------------------\n");
     for (int i = step - 10; i < step && song_pool[i] != NULL; i++)
     {
-        printf("\n  %d   |  %s\n", (i + 1), song_pool[i]->title);
+        printf("  %2d   |  %-48.48s | %2.2lf min\n", (i + 1), song_pool[i]->title, song_pool[i]->duration);
     }
     printf("----------------------------------------------------------------------\n");
     printf("[Enter -2 to go to prev page] | Page %d | [Enter -1 to go to next page]\n", ((int)step / 10));
@@ -213,7 +213,6 @@ void create_playlist()
         temp->prev_song = NULL;
         temp->next_song = NULL;
         header_node = temp;
-        tail_node = temp->next_song;
         now_playing = temp;
 
         system("clear");
@@ -237,33 +236,26 @@ void add_to_playlist()
     song_number = song_selector();
     if (song_number > 0 && song_number <= pool_insert_index)
     {
-        node_ptr temp = malloc(sizeof(PlaylistNode));
+        node_ptr new_node = (node_ptr) malloc(sizeof(PlaylistNode));
+        node_ptr last = header_node;
+        new_node->song = song_pool[song_number - 1];
+        new_node->next_song = NULL;
+
+        /* 4. If the Linked List is empty, then make the new
+          node as head */
         if (header_node == NULL)
         {
-
-            temp->song = song_pool[song_number - 1];
-            temp->prev_song = NULL;
-            temp->next_song = NULL;
-            header_node = temp;
-            tail_node = temp->next_song;
-
-            now_playing = header_node;
+            new_node->prev_song = NULL;
+            header_node = new_node;
         }
-
-        else if (header_node->next_song == NULL)
-        {
-            temp->song = song_pool[song_number - 1];
-            header_node->next_song = temp;
-            temp->prev_song = header_node;
-            temp->next_song = NULL;
-        }
-
         else
         {
-            temp->song = song_pool[song_number - 1];
-            tail_node->next_song = temp;
-            temp->prev_song = tail_node;
-            temp->next_song = NULL;
+            //Traverse till the last node */
+            while (last->next_song != NULL)
+                last = last->next_song;
+
+            last->next_song = new_node;
+            new_node->prev_song = last;
         }
         system("clear");
         printf("---\n%s has been added to your playlist.\n---", song_pool[song_number - 1]->title);
