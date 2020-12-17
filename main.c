@@ -14,7 +14,7 @@
 
 #define MAX_STRING_SIZE 75
 
-// Data Structure for an individual song [ FINAL ]
+// Data Structure for an individual song
 typedef struct Song *songptr;
 typedef struct Song
 {
@@ -26,7 +26,6 @@ typedef struct Song
 songptr song_pool[MAX_SONG_POOL];
 int pool_insert_index = 0;
 
-//playlist stuff from here
 typedef struct PlaylistNode *node_ptr;
 typedef struct PlaylistNode
 {
@@ -38,7 +37,7 @@ typedef struct PlaylistNode
 
 node_ptr header_node = NULL, now_playing = NULL;
 
-//Function to to check if the song pool is empty
+//Function to check if the song pool is empty
 bool is_pool_empty()
 {
     return song_pool[0] == NULL;
@@ -47,6 +46,64 @@ bool is_pool_empty()
 bool does_playlist_exist()
 {
     return !(header_node == NULL);
+}
+
+void play_next_song()
+{
+    if (does_playlist_exist() && now_playing != NULL)
+    {
+        if (now_playing->next_song != NULL)
+            now_playing = now_playing->next_song;
+        else
+            printf("REACHED END OF PLAYLIST");
+    }
+    else
+    {
+        printf("NO SONG ADDED TO PLAYLIST");
+    }
+}
+
+void play_prev_song()
+{
+    if (does_playlist_exist() && now_playing != NULL)
+    {
+        if (now_playing->prev_song != NULL)
+            now_playing = now_playing->prev_song;
+        else
+            printf("REACHED START OF PLAYLIST");
+    }
+    else
+    {
+        printf("NO SONG ADDED TO PLAYLIST");
+    }
+}
+
+void show_song_details()
+{
+    if (now_playing == NULL || now_playing->song == NULL)
+    {
+        printf("                       CREATE A PLAYLIST FIRST\n");
+    }
+    else
+    {
+        printf("\n----------------------------------------------------------------------\n");
+        printf("                          DETAILED OVERVIEW\n");
+        printf("----------------------------------------------------------------------\n");
+        printf("\t   TITLE    |   %s\n", now_playing->song->title);
+        printf("\t   ALBUM    |   %s\n", now_playing->song->album);
+        printf("\t   YEAR     |   %d\n", now_playing->song->year);
+        printf("\t  DURATION  |   %0.2lf minutes\n", now_playing->song->duration);
+        printf("\tSPOTIFY URI |   %s\n", now_playing->song->uri);
+        printf("    Paste the above URI in your browser to play the song on Spotify\n");
+        printf("----------------------------------------------------------------------\n");
+    }
+    char leave[MAX_STRING_SIZE];
+    printf("<<<<< Enter any input to return to MAIN MENU\n");
+    if (scanf("%s", leave))
+    {
+        system("clear");
+        return;
+    }
 }
 
 void main_menu()
@@ -67,17 +124,18 @@ void main_menu()
     printf("----------------------------------------------------------------------\n");
     printf("   #   |  Action   \n");
     printf("----------------------------------------------------------------------\n");
-    printf("   1   |  Create a new song(still faulty :/)\n");
+    printf("   1   |  Create a new song\n");
     printf("   2   |  Display all available songs\n");
     if (does_playlist_exist())
         printf("   3   |  Delete playlist\n");
     else
         printf("   3   |  Create a new playlist\n");
     printf("   4   |  Add a song to the playlist\n");
-    printf("   5   |  Shuffle playlist\n");
-    printf("   6   |  Display playlist\n");
-    printf("   7   |  Play previous track\n");
-    printf("   8   |  Play next track\n");
+    printf("   5   |  Show playlist\n");
+    printf("   6   |  Play previous track\n");
+    printf("   7   |  Play next track\n");
+    if (now_playing != NULL && now_playing->song != NULL)
+        printf("   8   |  Show more information about the song playing\n");
     printf("  -1   |  Exit music player\n");
     printf("----------------------------------------------------------------------\n");
     printf("                        Enter your choice below\n");
@@ -93,30 +151,30 @@ void show_playlist()
 {
     if (does_playlist_exist())
     {
-        printf("\n\n----------------------------------------------------------------------\n");
+        printf("\n----------------------------------------------------------------------\n");
         printf("                          YOUR PLAYLIST\n");
         printf("----------------------------------------------------------------------\n");
-        printf("   #   |  Song Title   \n");
+        printf(" Title                                            | Duration\n");
         printf("----------------------------------------------------------------------\n");
         node_ptr current = header_node;
-        while (current != NULL)
+        while (current != NULL && current->song != NULL)
         {
             node_ptr next = current->next_song;
-            printf("  %d   |  %s\n", 1, current->song->title); // pool=array of song structures
+            printf(" %-48.48s | %2.2lf min\n", current->song->title, current->song->duration);
             current = next;
         }
 
-        printf("----------------------------------------------------------------------\n");
+        printf("----------------------------------------------------------------------");
     }
     else
     {
-        printf("\nYou haven't created a playlist yet. Nothing to delete\n");
+        printf("\nYou haven't created a playlist yet.\n");
     }
 }
 
 void pagewise_song_display(int step)
 {
-    printf("\n\n----------------------------------------------------------------------\n");
+    printf("\n----------------------------------------------------------------------\n");
     printf("                             SONGS LIST\n");
     printf("----------------------------------------------------------------------\n");
     printf("   #   |  Title                                            | Duration\n");
@@ -192,7 +250,7 @@ Song *createSong(const char *title, const char *album, const short int year, con
     Song *temp = malloc(sizeof(Song));
     strcpy(temp->title, title);
     strcpy(temp->album, album);
-    //strcpy(temp->uri, uri);
+    strcpy(temp->uri, uri);
     strcpy(temp->id, id);
     temp->year = year;
     temp->duration = duration;
@@ -200,6 +258,7 @@ Song *createSong(const char *title, const char *album, const short int year, con
     return temp;
 }
 
+//Allocates memory for a new playlist and prompts user to add a song to it
 void create_playlist()
 {
     int song_number = 0, i = 0;
@@ -228,6 +287,7 @@ void create_playlist()
     }
 }
 
+//Prompts user to pick a song from the pool and add it to the existing playlist
 void add_to_playlist()
 {
     int song_number = 0;
@@ -236,7 +296,7 @@ void add_to_playlist()
     song_number = song_selector();
     if (song_number > 0 && song_number <= pool_insert_index)
     {
-        node_ptr new_node = (node_ptr) malloc(sizeof(PlaylistNode));
+        node_ptr new_node = (node_ptr)malloc(sizeof(PlaylistNode));
         node_ptr last = header_node;
         new_node->song = song_pool[song_number - 1];
         new_node->next_song = NULL;
@@ -247,10 +307,11 @@ void add_to_playlist()
         {
             new_node->prev_song = NULL;
             header_node = new_node;
+            now_playing = new_node;
         }
         else
         {
-            //Traverse till the last node */
+            //Traverse till the last node
             while (last->next_song != NULL)
                 last = last->next_song;
 
@@ -258,7 +319,7 @@ void add_to_playlist()
             new_node->prev_song = last;
         }
         system("clear");
-        printf("---\n%s has been added to your playlist.\n---", song_pool[song_number - 1]->title);
+        printf("%s has been added to your playlist.\n", song_pool[song_number - 1]->title);
     }
     else if (song_number == 0)
     {
@@ -266,10 +327,13 @@ void add_to_playlist()
     }
     else
     {
-        printf("\nThere was a problem while handling your request, try again.\n");
+        printf("\nThere was a problem while handling your request.\n");
     }
 }
 
+/** CSV Parser that maps a data set of upto songs onto the song pool
+    Songs must be present in the root directory at rawdata.csv
+*/
 void readFromCSV()
 {
     FILE *file = fopen("rawdata.csv", "r");
@@ -321,7 +385,7 @@ void readFromCSV()
                 i++;
                 continue;
             }
-            song_pool[i - 1] = createSong(songtitle, album, year, duration, "uri", id);
+            song_pool[i - 1] = createSong(songtitle, album, year, duration, uri, id);
             i++;
         }
     }
@@ -330,76 +394,54 @@ void readFromCSV()
     fclose(file);
 }
 
+//Function that allows the user to create a song of their own
 void user_song_input()
 {
     short int add_another = 1;
     char songname[MAX_STRING_SIZE];
-    short int year;
+    int year;
     int durationms;
     char id[MAX_STRING_SIZE];
     char album[MAX_STRING_SIZE];
-    char uri[MAX_STRING_SIZE] = "uri";
+    char uri[MAX_STRING_SIZE] = "spotify:track:";
     double duration = 0.0;
 
     while (add_another && pool_insert_index < MAX_SONG_POOL)
     {
-        printf("\nEnter the details of the song you want to create.\n");
-        printf("Song ID: \n");
-        scanf("%s", id);
-        printf("Title: \n");
+        system("clear");
+        printf("\nEnter the details of the song you want to create.\n[ Don't give spaces between each word, use _ instead\n");
+
+        printf("Title: ");
         scanf("%s", songname);
-        printf("Album: ");
+        printf("Album Name: ");
         scanf("%s", album);
         printf("Year of release: ");
-        scanf("%d", &year);
+        if (!(scanf("%d", &year)))
+        {
+            printf("INVALID INPUT ENTERED\n");
+            sleep(1);
+            break;
+        }
         printf("Duration(in s): ");
-        scanf("%d", &durationms);
+        if (!(scanf("%d", &durationms)))
+        {
+            printf("INVALID INPUT ENTERED\n");
+            sleep(1);
+            break;
+        }
         duration = durationms / 60;
-        song_pool[pool_insert_index] = createSong(songname, album, year, duration, "spotify:track:6h5PAsRni4IRlxWr6uDPTP", "00xx111");
-        printf("\n%s has been created.\n\n", songname);
-        printf("\nDo you want to create another song? (Enter 1 for yes and 0 for no)");
+        printf("Song ID: ");
+        scanf("%s", id);
+        strcat(uri, id);
+        song_pool[pool_insert_index] = createSong(songname, album, year, duration, uri, id);
+        printf("\nThe song %s has been created.\n\n", songname);
+        printf("\nDo you want to create another song?\n(Enter 1 for yes and 0 for no) : ");
         scanf("%d", &add_another);
     }
+    system("clear");
 }
 
-int shuffle_playlist()
-{
-    node_ptr header_node2 = NULL;
-
-    //split playlist
-    node_ptr slow, fast;
-
-    if (header_node->next_song == NULL) /*only one element*/
-        return 0;
-
-    slow = fast = header_node;
-
-    while (fast->next_song != NULL && fast->next_song->next_song != NULL)
-    {
-        slow = slow->next_song;
-        fast = fast->next_song->next_song;
-    }
-    header_node2 = slow->next_song;
-    header_node2->prev_song = NULL;
-    slow->next_song = NULL;
-
-    //interleave
-    node_ptr current_node1, current_node2;
-    for (current_node2 = header_node2; header_node2->next_song != 0; header_node2 = current_node2)
-    {
-        for (current_node1 = header_node; header_node->next_song != 0; header_node = current_node1)
-        {
-            current_node1 = header_node->next_song;
-            header_node->next_song = header_node2->next_song;
-            header_node2->next_song = header_node;
-            header_node->prev_song = header_node2;
-            current_node2 = header_node;
-            // display  the playlist if u want
-        }
-    }
-    printf("Shuffled successfully");
-}
-
+//Helper function to delete the playlist created and free all resources taken up by PlaylistNodes
 bool delete_playlist()
 {
     if (header_node != NULL)
@@ -418,13 +460,16 @@ bool delete_playlist()
     return false;
 }
 
+//Frees resources that had been dynamically allocated
 void free_all_memory()
 {
     delete_playlist();
     for (int i = 0; i < MAX_SONG_POOL && song_pool[i] != NULL; i++)
         free(song_pool[i]);
     printf("\n---END---");
-    Sleep(3);
+
+    //Generate a 2 second delay
+    sleep(2);
 }
 
 int main()
@@ -441,7 +486,6 @@ int main()
         case 0:
         { //Show menu options
             main_menu();
-
             break;
         }
         case 1:
@@ -489,25 +533,25 @@ int main()
         case 5:
         {
             system("clear");
-            shuffle_playlist();
+            show_playlist();
             break;
         }
         case 6:
         {
             system("clear");
-            show_playlist();
+            play_prev_song();
             break;
         }
         case 7:
         {
             system("clear");
-            //prev track
+            play_next_song();
             break;
         }
         case 8:
         {
             system("clear");
-            //next track
+            show_song_details();
             break;
         }
 
