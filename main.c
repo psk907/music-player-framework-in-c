@@ -400,7 +400,7 @@ void readFromCSV()
 //Function that allows the user to create a song of their own
 void user_song_input()
 {
-    short int add_another = 1;
+    int add_another = 1;
     char songname[MAX_STRING_SIZE];
     int year;
     int durationms;
@@ -477,7 +477,7 @@ void free_all_memory()
 
 int main()
 {
-    short int userChoice = 0;
+    int userChoice = 0;
     char *terminate = "X";
     int wrong_choice_count = 0;
     system("clear");
